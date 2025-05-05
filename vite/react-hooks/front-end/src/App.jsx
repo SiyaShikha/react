@@ -27,7 +27,7 @@ const Input = ({ onSubmitName }) => {
 
 const App = () => {
   const [names, setNames] = useState([]);
-  const [newName, setNewName] = useState(null);
+  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,21 +45,20 @@ const App = () => {
   useEffect(() => {
     const addName = async (name) => {
       try {
-        const response = await fetch("http://localhost:8000/add-name", {
+        await fetch("http://localhost:8000/add-name", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ name }),
         });
-        const result = await response.json();
       } catch {
         console.error("Error adding name");
       }
     };
     if (newName) {
       addName(newName);
-      setNewName(null);
+      setNewName("");
     }
   }, [newName]);
 
