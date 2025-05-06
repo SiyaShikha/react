@@ -1,7 +1,26 @@
 import { useEffect, useState } from "react";
 
-const Input = () => {
+const Input = ({ value, onChange, onSubmit }) => {
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={onChange}
+      onKeyDown={onSubmit}
+    />
+  );
+};
+
+const App = () => {
+  const [names, setNames] = useState([]);
   const [name, setName] = useState("");
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/get-names")
+      .then((res) => res.json())
+      .then((names) => setNames(names));
+  }, [reload]);
 
   const handleChange = (event) => {
     setName(event.target.value);
@@ -22,32 +41,13 @@ const Input = () => {
         body: JSON.stringify({ name }),
       });
       setName("");
+      setReload(!reload);
     }
   };
 
   return (
-    <input
-      type="text"
-      value={name}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-    />
-  );
-};
-
-const App = () => {
-  const [names, setNames] = useState([]);
-  // const [newName, setNewName] = useState("");
-
-  useEffect(() => {
-    fetch("http://localhost:8000/get-names")
-      .then((res) => res.json())
-      .then((names) => setNames(names));
-  }, [names]);
-
-  return (
     <div>
-      <Input />
+      <Input value={name} onChange={handleChange} onSubmit={handleKeyDown} />
       <ul>
         {names.map((item, index) => <li key={index}>{item}</li>)}
       </ul>
